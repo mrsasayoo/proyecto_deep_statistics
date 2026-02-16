@@ -140,17 +140,23 @@ situacion_3/
 │   │   └── processing_state.json
 │   └── processing_log.txt
 │
+├── columnas_110_fanniemae.csv          ← Diccionario de las 110 columnas (CSV)
+├── README_columnas.md                 ← Documentación de columnas por categoría
+│
 ├── src/                               ← Código fuente del pipeline
 │   ├── config.py                      ← Variables globales, rutas, parámetros
-│   ├── 00_test_headers.py             ← Fase 0.0: Verificar estructura
-│   ├── 01_construccion_panel.py       ← Fase 0: EDA + Conversión a Parquet
-│   ├── 02_analisis_latente.py         ← Fase 1: AFE/AFC + reducción dimensional
-│   ├── 03_deep_learning.py            ← Fase 2: VAE para embeddings
-│   ├── 04_clustering.py               ← Fase 3: K-Means, GMM, jerárquico
-│   ├── 05_perfilado_riesgo.py         ← Fase 4: Perfiles de riesgo
+│   ├── 000_verificar_dataset.py       ← Fase 0.0: Verificar estructura del ZIP
+│   ├── 001_csv_to_parquet_parts.py    ← Fase 0.1: CSV → Parquet + perfilado
+│   ├── 002_consolidar_trimestres.py   ← Fase 0.2: Renombrar cols + merge parts
+│   ├── 010_eda_masivo.py              ← Fase 1.0: EDA masivo (34 figuras)
+│   ├── 020_analisis_latente.py        ← Fase 2: AFE/AFC + reducción dimensional
+│   ├── 030_deep_learning.py           ← Fase 3: VAE para embeddings
+│   ├── 040_clustering.py              ← Fase 4: K-Means, GMM, jerárquico
+│   ├── 050_perfilado_riesgo.py        ← Fase 5: Perfiles de riesgo
 │   └── utils/
 │       ├── __init__.py
 │       ├── data_loader.py             ← Carga distribuida desde ZIP
+│       ├── logging_utils.py           ← Logging centralizado
 │       ├── memory_utils.py            ← Monitoreo y liberación de RAM
 │       └── plotting_utils.py          ← Gráficos académicos (300 DPI)
 │
@@ -197,17 +203,32 @@ situacion_3/
 
 ### 4.3 Encabezados
 
-Los 110 nombres de columna se definen en `config.py → PERFORMANCE_COLUMNS`. Incluyen:
+Los 110 nombres de columna se definen en `config.py → PERFORMANCE_COLUMNS` y
+se documentan en detalle en `README_columnas.md`. Los nombres provienen del
+diccionario `columnas_110_fanniemae.csv`.
 
-| Rango | Descripción |
-|:---|:---|
-| 1-5 | Identificación del préstamo y servicer |
-| 6-9 | Tasas de interés y saldos |
-| 10-18 | Plazos, fechas, madurez |
-| 19-24 | LTV, DTI, FICO (variables clave de riesgo) |
-| 25-35 | Tipo de propiedad, propósito, ocupación |
-| 36-60 | Modificaciones, costos de disposición, ejecución |
-| 61-109 | Campos extendidos Freddie Mac 2024 |
+**Nota sobre el mapeo de posiciones:** cada línea CSV inicia y termina con `|`,
+generando 110 campos (0-109). El campo 0 es vacío (`_empty`, artefacto del
+delimitador inicial). Los campos 1-109 corresponden a las posiciones 2-110
+del diccionario Fannie Mae (la posición 1, Reference Pool ID, no existe en
+este dataset).
+
+| Rango | Categoría | Columnas representativas |
+|:---|:---|:---|
+| 0 | Artefacto | `_empty` (se descarta) |
+| 1-2 | Identificación / Temporal | `loan_identifier`, `monthly_reporting_period` |
+| 3-6 | Entidades | `channel`, `seller_name`, `servicer_name`, `master_servicer` |
+| 7-12 | Originación | `original_interest_rate`, `original_upb`, `original_loan_term` |
+| 8, 11, 15-17 | Performance mensual | `current_interest_rate`, `current_actual_upb`, `loan_age` |
+| 13-14, 18, 37 | Temporal | `origination_date`, `first_payment_date`, `maturity_date` |
+| 19-26 | Riesgo / Originación | LTV, CLTV, DTI, FICO, `first_time_home_buyer_indicator` |
+| 27-32 | Colateral | `property_type`, `property_state`, MSA, ZIP |
+| 33-38 | Seguros / Amortización | MI%, `amortization_type`, `prepayment_penalty_indicator` |
+| 39-61 | Delinquency / Liquidación | `current_loan_delinquency_status`, foreclosure, costs |
+| 62-77 | Modificación / Crédito | modification losses, credit events |
+| 78-86 | Especiales | `special_eligibility_program`, `high_balance_loan_indicator` |
+| 87-100 | ARM | `arm_product_type`, caps, margins, plan numbers |
+| 101-109 | Asistencia / CRT | `borrower_assistance_plan`, `deal_name`, deferral |
 
 ---
 
@@ -269,7 +290,7 @@ Para archivos marcados como **grandes** (>20 GB descomprimidos, como 2003Q3 o 20
 
 ### 6.3 Sub-Fase 0.1 — Inventario del ZIP
 
-> **Script:** `00_test_headers.py` (ya ejecutado ✅)  
+> **Script:** `000_verificar_dataset.py` (ya ejecutado ✅)  
 > **Memoria:** < 50 MB  
 > **Tiempo:** ~30 segundos
 
@@ -285,7 +306,7 @@ Lee la tabla de contenidos del ZIP sin extraer nada:
 
 ### 6.4 Sub-Fase 0.2 — Conversión a Parquet + Perfilado Simultáneo
 
-> **Script:** `01_construccion_panel.py`  
+> **Script:** `001_csv_to_parquet_parts.py`  
 > **Tiempo estimado:** 9-15 horas (paralelo, no supervisado)
 
 Este es el script central. Procesa cada archivo CSV en esta secuencia:
@@ -327,7 +348,36 @@ Se eliminan todas las variables del chunk, se llama `gc.collect()`, y se verific
 
 ---
 
-### 6.5 Sub-Fase 0.3 — Validación de Integridad Post-Conversión
+### 6.5 Sub-Fase 0.2.5 — Consolidación de Parquets
+
+> **Script:** `002_consolidar_trimestres.py`  
+> **Tiempo estimado:** 30-60 minutos  
+> **Prerrequisito:** Haber completado la Sub-Fase 0.2 para todos los 101 archivos
+
+Los 86 trimestres procesados inicialmente usaban **nombres de columna incorrectos**
+(por un desfase de 1 posición respecto al diccionario CSV, ver sección 4.3). Este
+script:
+
+1. **Renombra columnas** de los Parquets existentes usando `OLD_TO_NEW_COLUMN_MAP`
+   (92 columnas cambian de nombre, definidas en `config.py`)
+2. **Fusiona archivos _partXX** en un único Parquet por trimestre (los archivos CSV
+   >5 GB se dividieron en múltiples Parquets de ≤2 GB durante la conversión)
+3. **Respalda** los Parquets originales en `panel_analitico_backup/`
+4. **Valida** el resultado (conteo de filas, 109 columnas, sin columna `_empty`)
+
+Flujo:
+```
+panel_analitico/                     panel_analitico_temp/
+├── 2003Q3_part01.parquet  ─┐       ├── 2003Q3.parquet (renombrado + fusionado)
+├── 2003Q3_part02.parquet  ─┤  →    ├── ...
+├── 2003Q3_part03.parquet  ─┘       └── 2025Q1.parquet
+├── 2024Q4.parquet         ─────→
+└── ...
+```
+
+---
+
+### 6.6 Sub-Fase 0.3 — Validación de Integridad Post-Conversión
 
 Después de convertir cada archivo, un script de validación verifica:
 
@@ -340,7 +390,7 @@ Si falla → marca como `REQUIERE_REPROCESAMIENTO` y reintenta solo ese archivo.
 
 ---
 
-### 6.6 Sub-Fase 0.4 — Consolidación del Perfil Estadístico Global
+### 6.7 Sub-Fase 0.4 — Consolidación del Perfil Estadístico Global
 
 Una vez que ambas máquinas terminan, se consolidan los 101 perfiles JSON individuales:
 
@@ -356,7 +406,7 @@ Una vez que ambas máquinas terminan, se consolidan los 101 perfiles JSON indivi
 
 ---
 
-### 6.7 Estimación de Tiempos
+### 6.8 Estimación de Tiempos
 
 | Etapa | Master (Portátil) | Worker (Servidor) |
 |:---|:---|:---|
@@ -369,7 +419,7 @@ Una vez que ambas máquinas terminan, se consolidan los 101 perfiles JSON indivi
 
 Por eso el **checkpoint por archivo** es crítico: si la máquina se congela a las 7 horas, el script retoma desde el último archivo completado, no desde cero.
 
-### 6.8 Output Final de la Fase 0
+### 6.9 Output Final de la Fase 0
 
 Al terminar:
 - 101 archivos Parquet (estimado 70-100 GB total)
@@ -384,28 +434,35 @@ Con esto, las fases posteriores trabajan sobre Parquet en **minutos** en lugar d
 
 ## 7. Fases del Pipeline Analítico
 
-### Fase 1: Extracción de Componentes Latentes
-**Script:** `02_analisis_latente.py`
+### Fase 1: EDA Masivo
+**Script:** `010_eda_masivo.py` (ejecutado parcialmente ✅)
+- Lectura de perfiles JSON consolidados + muestreo de Parquets
+- 34 figuras generadas: histogramas, heatmaps de nulidad, evolución temporal
+- 7 tablas CSV de estadísticas descriptivas
+- Dashboard multipanel de 6 variables clave
+
+### Fase 2: Extracción de Componentes Latentes
+**Script:** `020_analisis_latente.py`
 - AFE (Análisis Factorial Exploratorio) sobre variables numéricas del panel
 - AFC (Análisis Factorial Confirmatorio) para validar hipótesis de riesgo
 - Reducción dimensional con PCA/Factor Analysis para datos mixtos
 - Generar matriz de puntuaciones factoriales
 
-### Fase 2: Deep Learning — Autoencoders
-**Script:** `03_deep_learning.py`
+### Fase 3: Deep Learning — Autoencoders
+**Script:** `030_deep_learning.py`
 - VAE (Variational Autoencoder) para representación no lineal
 - Entrenamiento distribuido entre Master y Worker con Ray
 - Generar embeddings de riesgo de baja dimensión
 
-### Fase 3: Segmentación (Clustering)
-**Script:** `04_clustering.py`
+### Fase 4: Segmentación (Clustering)
+**Script:** `040_clustering.py`
 - K-Means sobre scores/embeddings latentes
 - Gaussian Mixture Models (GMM)
 - Clustering jerárquico (Ward)
 - Comparación de métricas (Silhouette, Davies-Bouldin, Calinski-Harabasz)
 
-### Fase 4: Caracterización de Perfiles de Riesgo
-**Script:** `05_perfilado_riesgo.py`
+### Fase 5: Caracterización de Perfiles de Riesgo
+**Script:** `050_perfilado_riesgo.py`
 - Centroides por cluster
 - Perfilado financiero: FICO, LTV, DTI, tasa de morosidad
 - Visualización de perfiles con gráficos de radar
@@ -476,12 +533,16 @@ Freddie Mac usa valores específicos para indicar datos faltantes. Deben reempla
 
 | Campo | Valor centinela | Significado |
 |:---|:---|:---|
-| `borrower_credit_score` | 9999 | FICO no disponible |
-| `co_borrower_credit_score` | 9999 | FICO co-prestatario no disponible |
-| `original_dti` | 999 | DTI no disponible |
-| `original_ltv` | 999 | LTV no disponible |
-| `original_cltv` | 999 | CLTV no disponible |
-| `mortgage_insurance_pct` | 999 | MI% no disponible |
+| `borrower_credit_score_at_origination` | 9999 | FICO prestatario al originar no disponible |
+| `co_borrower_credit_score_at_origination` | 9999 | FICO co-prestatario al originar no disponible |
+| `borrower_credit_score_at_issuance` | 9999 | FICO a emisión CRT no disponible |
+| `co_borrower_credit_score_at_issuance` | 9999 | FICO co-prestatario CRT no disponible |
+| `borrower_credit_score_current` | 9999 | FICO actual no disponible |
+| `co_borrower_credit_score_current` | 9999 | FICO co-prestatario actual no disponible |
+| `debt_to_income_dti` | 999 | DTI no disponible |
+| `original_loan_to_value_ratio_ltv` | 999 | LTV no disponible |
+| `original_combined_loan_to_value_ratio_cltv` | 999 | CLTV no disponible |
+| `mortgage_insurance_percentage` | 999 | MI% no disponible |
 | `number_of_borrowers` | 99 | No disponible |
 | `current_loan_delinquency_status` | `"XX"` | No reportado |
 | Campos genéricos string | `""`, `" "` | Vacío |
@@ -544,22 +605,82 @@ Freddie Mac usa valores específicos para indicar datos faltantes. Deben reempla
 
 ### Verificar estructura (ya completado ✅):
 ```bash
-python src/00_test_headers.py
+python src/000_verificar_dataset.py
 ```
 
-### Fase 0 — Construcción del Panel:
+### Fase 0.1 — Conversión CSV → Parquet (86/101 completados ✅):
 ```bash
-# Iniciar el clúster Ray:
-bash scripts/ray_start.sh all
-
-# Monitor en otra terminal:
+# Monitor de RAM en otra terminal:
 bash scripts/monitor_cluster.sh 5
 
-# Ejecutar la construcción del panel:
-python src/01_construccion_panel.py
+# Ejecutar la conversión (retoma desde checkpoint):
+python src/001_csv_to_parquet_parts.py
+```
+
+### Fase 0.2 — Consolidación (renombrar columnas + merge parts):
+```bash
+python src/002_consolidar_trimestres.py
+```
+
+### Fase 1 — EDA Masivo:
+```bash
+python src/010_eda_masivo.py
 ```
 
 ### Pipeline completo (desde Fase 0):
 ```bash
 python run_pipeline.py --distributed
 ```
+
+---
+
+## 14. Convención de Numeración de Scripts
+
+| Prefijo | Fase | Descripción |
+|:---|:---|:---|
+| `000_` – `009_` | Fase 0: ETL | Verificación, conversión, consolidación |
+| `010_` – `019_` | Fase 1: EDA | Análisis exploratorio masivo |
+| `020_` – `029_` | Fase 2: Latente | AFE/AFC, reducción dimensional |
+| `030_` – `039_` | Fase 3: Deep Learning | VAE, embeddings |
+| `040_` – `049_` | Fase 4: Clustering | K-Means, GMM, jerárquico |
+| `050_` – `059_` | Fase 5: Perfilado | Risk profiling, informe |
+
+Los scripts dentro de cada fase se ejecutan en orden numérico. El número de
+3 dígitos deja espacio para intercalar scripts intermedios sin renumerar.
+
+---
+
+## 15. Estado Actual del Proyecto
+
+> Última actualización: Febrero 2026
+
+### Fases completadas
+
+| Script | Estado | Resultado |
+|:---|:---|:---|
+| `000_verificar_dataset.py` | ✅ Completado | 101 archivos, 110 columnas verificadas |
+| `001_csv_to_parquet_parts.py` | 🔶 86/101 | 86 trimestres convertidos (2,376M filas), 15 pendientes |
+| `002_consolidar_trimestres.py` | ⬜ Pendiente | Renombrar 92 columnas + merge parts en 86 Parquets |
+| `010_eda_masivo.py` | 🔶 Parcial | 34 figuras + 7 tablas generadas (con columnas antiguas) |
+
+### Descubrimiento: desfase de columnas
+
+Se descubrió que los nombres originales en `config.py` tenían un **desfase de
+1 posición** respecto al diccionario CSV de Fannie Mae. Causa: la posición 1 del
+diccionario (Reference Pool ID, X(4)) **no existe** en este dataset. Los campos de
+datos 1-109 corresponden a las posiciones 2-110 del diccionario.
+
+Esto provocaba que, por ejemplo, la posición 6 se llamara `current_interest_rate`
+pero contuviera `master_servicer` (un string), causando que el dashboard multipanel
+mostrara 5 de 6 gráficos.
+
+**Corrección:** 92 columnas renombradas en `config.py` con mapeo `OLD_TO_NEW_COLUMN_MAP`.
+Los Parquets existentes aún tienen los nombres antiguos y requieren ejecutar
+`002_consolidar_trimestres.py` para aplicar el renombrado.
+
+### Próximos pasos
+
+1. Ejecutar `002_consolidar_trimestres.py` para renombrar columnas + fusionar parts
+2. Completar los 15 trimestres pendientes con `001_csv_to_parquet_parts.py --resume`
+3. Re-ejecutar `010_eda_masivo.py` para regenerar figuras con columnas correctas
+4. Continuar con `020_analisis_latente.py` (AFE/AFC)
