@@ -1,0 +1,33 @@
+# ============================================================================
+# Requirements - Proyecto Situación 2: Clustering EuroSAT
+# ============================================================================
+# Instalación: pip install -r requirements.txt
+
+# Core científico
+numpy>=1.24.0,<2.0.0
+pandas>=2.0.0
+scipy>=1.10.0
+
+# Machine Learning
+scikit-learn>=1.3.0
+
+# Procesamiento de imágenes
+tifffile>=2023.7.0
+rasterio>=1.3.0
+Pillow>=10.0.0
+
+# Visualización
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utilidades
+tqdm>=4.65.0  # Barras de progreso
+joblib>=1.3.0  # Paralelización y persistencia de modelos
+
+# Análisis exploratorio (opcional)
+jupyter>=1.0.0
+ipywidgets>=8.0.0
+
+# Calidad de código (opcional para desarrollo)
+black>=23.0.0  # Formateador de código
+pylint>=2.17.0  # Linter

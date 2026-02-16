@@ -1,0 +1,57 @@
+# ============================================================================
+# .gitignore - Proyecto Situación 2
+# ============================================================================
+
+# Datos crudos y procesados (muy pesados)
+dataset/EuroSAT_MS/
+dataset/*.zip
+data_processed/*.npy
+data_processed/*.csv
+data_processed/*.txt
+
+# Modelos entrenados
+outputs/models/*.pkl
+outputs/models/*.npy
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Notebooks
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Mantener estructura de carpetas vacías
+!.gitkeep
+!data_processed/.checkpoints/.gitkeep
+!outputs/figures/**/.gitkeep
+
+# NO ignorar estos archivos importantes
+!requirements.txt
+!README.md
+!plan_maestro.md
+!src/*.py
+!src/utils/*.py

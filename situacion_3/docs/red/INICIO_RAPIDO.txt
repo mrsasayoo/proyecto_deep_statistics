@@ -1,0 +1,152 @@
+═══════════════════════════════════════════════════════════════════
+  ACCESO AUTOMÁTICO CONFIGURADO - Resumen Rápido
+═══════════════════════════════════════════════════════════════════
+
+🔐 CONTRASEÑA: 137919 (laptop y servidor)
+   Configurada automáticamente en todos los scripts
+
+═══════════════════════════════════════════════════════════════════
+⚡ COMANDOS PRINCIPALES (SIN PEDIR CONTRASEÑA)
+═══════════════════════════════════════════════════════════════════
+
+1. SSH AL SERVIDOR
+   
+   Interactivo (abrir terminal):
+   $ ./ssh_rapido.sh
+   
+   Ejecutar comando único:
+   $ ./ssh_rapido.sh 'hostname'
+   $ ./ssh_rapido.sh 'ls -la'
+   $ ./ssh_rapido.sh 'python3 script.py'
+
+2. COPIAR ARCHIVOS
+
+   Subir al servidor:
+   $ ./copiar_servidor.sh archivo.txt
+   $ ./copiar_servidor.sh datos.csv ~/carpeta/
+   
+   Descargar del servidor:
+   $ ./descargar_servidor.sh ~/resultados.txt
+   $ ./descargar_servidor.sh ~/datos.csv ./local/
+
+3. VERIFICAR RED
+
+   Completo:
+   $ ./verificar_red.sh
+   
+   Solo IPs:
+   $ ./comandos_red.sh ips
+   
+   Estado Tailscale:
+   $ ./comandos_red.sh status
+
+4. PARALELIZACIÓN
+
+   Ejemplo automático:
+   $ python3 ejemplo_paralelizacion.py
+   
+   ✅ Ejecuta en laptop y servidor simultáneamente
+   ✅ Sin pedir contraseñas
+   ✅ Muestra recursos de ambas máquinas
+
+═══════════════════════════════════════════════════════════════════
+📊 IPS ACTUALES
+═══════════════════════════════════════════════════════════════════
+
+Laptop (nznicolas):
+  LAN:       192.168.1.17
+  Tailscale: 100.116.239.1
+
+Servidor (nicolasmesa):
+  LAN:       192.168.1.15
+  Tailscale: 100.110.27.62
+
+Red:
+  Gateway:   192.168.1.1
+  Pública:   186.27.152.241
+  Duck DNS:  mrsasayomesa.duckdns.org
+
+═══════════════════════════════════════════════════════════════════
+🧪 PRUEBAS PARA VERIFICAR QUE FUNCIONA
+═══════════════════════════════════════════════════════════════════
+
+# Test 1: SSH rápido
+./ssh_rapido.sh 'hostname && whoami'
+# Debe mostrar: nicolasmesa / mrsasayo_mesa
+
+# Test 2: Verificación completa
+./verificar_red.sh
+# Debe mostrar: ✅ SSH: Conexión exitosa (automática)
+
+# Test 3: Copiar archivo
+echo "test" > test.txt && ./copiar_servidor.sh test.txt
+# Debe copiar sin pedir contraseña
+
+# Test 4: Paralelización
+python3 ejemplo_paralelizacion.py
+# Debe ejecutar tareas en ambas máquinas simultáneamente
+
+═══════════════════════════════════════════════════════════════════
+📁 ARCHIVOS CREADOS
+═══════════════════════════════════════════════════════════════════
+
+Configuración:
+  .config_red.sh                 Credenciales (protegido 600)
+
+Scripts de acceso:
+  ssh_rapido.sh                  SSH automático
+  copiar_servidor.sh             Subir archivos
+  descargar_servidor.sh          Descargar archivos
+  
+Scripts de verificación:
+  verificar_red.sh               Estado completo
+  comandos_red.sh                Cheat sheet
+
+Paralelización:
+  ejemplo_paralelizacion.py      Ejemplo Python
+
+Documentación:
+  ACCESO_RAPIDO.md               Guía completa (11 KB)
+  informacion_red_actual.md      Info detallada (16 KB)
+  resumen_ips.txt                IPs rápidas
+  README_RED.md                  Índice maestro
+
+═══════════════════════════════════════════════════════════════════
+⚠️  SEGURIDAD
+═══════════════════════════════════════════════════════════════════
+
+✅ .config_red.sh tiene permisos 600 (solo tú puedes leer)
+✅ Archivos con contraseñas agregados a .gitignore
+⚠️  NO subir estos archivos a repositorios públicos
+
+Para más seguridad (futuro):
+  # Generar llave SSH
+  ssh-keygen -t ed25519
+  
+  # Copiar al servidor (última vez que pides contraseña)
+  ssh-copy-id mrsasayo_mesa@nicolasmesa
+  
+  # Después nunca más pedirá contraseña
+  # Y no necesitas contraseñas en los scripts
+
+═══════════════════════════════════════════════════════════════════
+📖 VER DOCUMENTACIÓN COMPLETA
+═══════════════════════════════════════════════════════════════════
+
+cat ACCESO_RAPIDO.md        # Guía completa con ejemplos
+cat README_RED.md            # Índice de todos los archivos
+./comandos_red.sh            # Cheat sheet interactivo
+
+═══════════════════════════════════════════════════════════════════
+✅ TODO LISTO PARA USAR
+═══════════════════════════════════════════════════════════════════
+
+Empezar ahora:
+  1. ./ssh_rapido.sh         → Conectar al servidor
+  2. ./verificar_red.sh      → Ver estado completo
+  3. python3 ejemplo_paralelizacion.py  → Probar paralelización
+
+═══════════════════════════════════════════════════════════════════
+Fecha: 14 de febrero de 2026
+Estado: ✅ Configuración completa y probada
+═══════════════════════════════════════════════════════════════════

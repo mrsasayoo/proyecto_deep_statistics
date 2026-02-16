@@ -1,0 +1,111 @@
+position,field_name,type,max_length,category,descripcion_breve
+1,Reference Pool ID,ALPHA-NUMERIC,X(4),IDENTIFICACION,Identificador único del pool de referencia al que pertenece el préstamo en operaciones CRT
+2,Loan Identifier,ALPHA-NUMERIC,X(12),IDENTIFICACION,Identificador único del préstamo hipotecario (no corresponde a otros IDs de Fannie Mae)
+3,Monthly Reporting Period,DATE,MMYYYY,TEMPORAL,Mes y año del corte de información reportado por el servicer
+4,Channel,ALPHA-NUMERIC,X(1),ENTIDADES,Canal de originación: R=Retail / C=Correspondent / B=Broker
+5,Seller Name,ALPHA-NUMERIC,X(50),ENTIDADES,Nombre de la entidad que entregó el préstamo a Fannie Mae (muestra 'Other' si representa <1% del volumen)
+6,Servicer Name,ALPHA-NUMERIC,X(50),ENTIDADES,Nombre del servicer primario del préstamo (en blanco antes de dic-2001)
+7,Master Servicer,ALPHA-NUMERIC,X(10),ENTIDADES,Servicer maestro del préstamo (siempre Fannie Mae)
+8,Original Interest Rate,NUMERIC,9(2).999,ORIGINACION,Tasa de interés original del préstamo según el pagaré hipotecario
+9,Current Interest Rate,NUMERIC,9(2).999,PERFORMANCE_MENSUAL,Tasa de interés vigente para el período de pago actual (actualizada si hay modificación)
+10,Original UPB,NUMERIC,9(10).99,ORIGINACION,Monto original del préstamo en dólares según el pagaré al momento de originar
+11,UPB at Issuance,NUMERIC,9(10).99,IDENTIFICACION,Saldo insoluto del préstamo a la fecha de corte del pool de referencia CRT
+12,Current Actual UPB,NUMERIC,9(10).99,PERFORMANCE_MENSUAL,Saldo insoluto actual real basado en pagos efectivamente recibidos del prestatario
+13,Original Loan Term,NUMERIC,9(3),ORIGINACION,Número de meses de pagos programados al momento de originar el préstamo
+14,Origination Date,DATE,MMYYYY,TEMPORAL,Fecha de emisión del pagaré hipotecario individual
+15,First Payment Date,DATE,MMYYYY,TEMPORAL,Fecha del primer pago programado según los documentos del préstamo
+16,Loan Age,NUMERIC,9(3),PERFORMANCE_MENSUAL,Número de meses calendario desde la fecha de originación del préstamo
+17,Remaining Months to Legal Maturity,NUMERIC,9(3),PERFORMANCE_MENSUAL,Meses restantes hasta la fecha de vencimiento legal definida en los documentos
+18,Remaining Months To Maturity,NUMERIC,9(3),PERFORMANCE_MENSUAL,Meses restantes para amortizar el saldo a cero considerando prepagos (en blanco si modificado)
+19,Maturity Date,DATE,MMYYYY,TEMPORAL,Mes y año en que el préstamo está programado para pagarse completamente
+20,Original Loan to Value Ratio (LTV),NUMERIC,9(3),ORIGINACION,Relación porcentual entre el monto del préstamo y el valor de la propiedad al originar
+21,Original Combined Loan to Value Ratio (CLTV),NUMERIC,9(3),ORIGINACION,Relación entre todos los préstamos conocidos al originar y el valor de la propiedad
+22,Number of Borrowers,NUMERIC,9(2),ORIGINACION,Número de personas obligadas a pagar el préstamo hipotecario
+23,Debt-To-Income (DTI),NUMERIC,9(2),ORIGINACION,Ratio de deuda total mensual sobre ingreso mensual del prestatario al originar
+24,Borrower Credit Score at Origination,NUMERIC,9(3),ORIGINACION,Puntaje FICO clásico del prestatario principal al momento de originación
+25,Co-Borrower Credit Score at Origination,NUMERIC,9(3),ORIGINACION,Puntaje FICO clásico del co-prestatario al momento de originación
+26,First Time Home Buyer Indicator,ALPHA-NUMERIC,X(1),ORIGINACION,Indica si el prestatario es comprador de vivienda por primera vezg este sc (Y/N/Null)
+27,Loan Purpose,ALPHA-NUMERIC,X(1),ORIGINACION,Propósito del préstamo: C=Cash-Out Refi / R=Refinance / P=Purchase / U=Refi no especificado
+28,Property Type,ALPHA-NUMERIC,X(2),COLATERAL,Tipo de propiedad: CO=Condo / CP=Co-op / PU=PUD / MH=Manufactured / SF=Single-Family
+29,Number of Units,NUMERIC,9(1),COLATERAL,Número de unidades que componen la propiedad hipotecada (1 a 4)
+30,Occupancy Status,ALPHA-NUMERIC,X(1),COLATERAL,Estado de ocupación al originar: P=Principal / S=Second / I=Investor / U=Unknown
+31,Property State,ALPHA-NUMERIC,X(2),COLATERAL,Abreviatura de dos letras del estado donde se ubica la propiedad
+32,Metropolitan Statistical Area (MSA),ALPHA-NUMERIC,X(5),COLATERAL,Código numérico del área estadística metropolitana de la propiedad (00000 si no aplica)
+33,Zip Code Short,ALPHA-NUMERIC,X(3),COLATERAL,Primeros tres dígitos del código postal de la propiedad
+34,Mortgage Insurance Percentage,NUMERIC,9(3).99,ORIGINACION,Porcentaje original de cobertura del seguro hipotecario del préstamo asegurado
+35,Amortization Type,ALPHA-NUMERIC,X(3),ORIGINACION,Tipo de amortización al originar: ARM=Tasa variable / FRM=Tasa fija
+36,Prepayment Penalty Indicator,ALPHA-NUMERIC,X(1),ORIGINACION,Indica si el prestatario tiene penalidad por pago anticipado de capital (Y/N)
+37,Interest Only Loan Indicator,ALPHA-NUMERIC,X(1),ORIGINACION,Indica si el préstamo requiere solo pagos de interés por un período inicial (Y/N)
+38,Interest Only First Principal And Interest Payment Date,DATE,MMYYYY,TEMPORAL,Para préstamos interest-only: fecha del primer pago de capital e interés totalmente amortizante
+39,Months to Amortization,NUMERIC,9(3),ORIGINACION,Para interest-only: meses desde el mes actual hasta el primer pago de capital e interés
+40,Current Loan Delinquency Status,ALPHA-NUMERIC,X(2),PERFORMANCE_MENSUAL,Número de meses de mora del prestatario según los documentos hipotecarios (XX=desconocido)
+41,Loan Payment History,ALPHA-NUMERIC,X(48),PERFORMANCE_MENSUAL,Historial de pagos codificado de los últimos 24 meses (00=corriente / 01=30-59d / 02=60-89d / etc.)
+42,Modification Flag,ALPHA-NUMERIC,X(1),MODIFICACION,Indica si el préstamo ha sido modificado en algún momento (Y/N)
+43,Mortgage Insurance Cancellation Indicator,ALPHA-NUMERIC,X(2),PERFORMANCE_MENSUAL,Estado del seguro hipotecario: Y=cancelado / M=vigente / NA=nunca tuvo MI
+44,Zero Balance Code,ALPHA-NUMERIC,X(3),LIQUIDACION,Código de razón por la que el saldo llegó a cero (01=prepago / 03=short sale / 09=REO / etc.)
+45,Zero Balance Effective Date,DATE,MMYYYY,TEMPORAL,Fecha en que el saldo del préstamo fue reducido a cero
+46,UPB at the Time of Removal,NUMERIC,9(10).99,LIQUIDACION,Saldo insoluto del préstamo en el momento de su remoción del pool o liquidación
+47,Repurchase Date,DATE,MMYYYY,TEMPORAL,Fecha en que ocurrió la recompra del préstamo (Reversed Credit Event)
+48,Scheduled Principal Current,NUMERIC,9(10).99,PERFORMANCE_MENSUAL,Pago mínimo de capital obligatorio para el período de reporte según términos del préstamo
+49,Total Principal Current,NUMERIC,9(10).99,PERFORMANCE_MENSUAL,Cambio total en el UPB actual entre el período anterior y el actual
+50,Unscheduled Principal Current,NUMERIC,9(10).99,PERFORMANCE_MENSUAL,Capital recibido en exceso del pago programado (prepago parcial del período)
+51,Last Paid Installment Date,DATE,MMYYYY,TEMPORAL,Fecha de vencimiento de la última cuota pagada recibida para el préstamo
+52,Foreclosure Date,DATE,MMYYYY,TEMPORAL,Fecha en que se completó legalmente la ejecución hipotecaria (foreclosure)
+53,Disposition Date,DATE,MMYYYY,TEMPORAL,Fecha en que Fannie Mae transfirió la propiedad a un tercero o se satisfizo la obligación
+54,Foreclosure Costs,NUMERIC,9(10).99,LIQUIDACION,Gastos asociados a obtener el título de la propiedad y mantener servicios durante el proceso
+55,Property Preservation and Repair Costs,NUMERIC,9(10).99,LIQUIDACION,Gastos de mantenimiento y reparación de la propiedad durante el proceso de disposición
+56,Asset Recovery Costs,NUMERIC,9(10).99,LIQUIDACION,Gastos de desalojo de ocupantes y bienes personales de la propiedad post-foreclosure
+57,Miscellaneous Holding Expenses and Credits,NUMERIC,9(10).99,LIQUIDACION,Gastos y créditos varios durante la tenencia (HOA_seguros_ingresos_por_renta_etc.)
+58,Associated Taxes for Holding Property,NUMERIC,9(10).99,LIQUIDACION,Pago de impuestos asociados a la tenencia de la propiedad durante el proceso
+59,Net Sales Proceeds,NUMERIC,9(10).99,LIQUIDACION,Efectivo neto recibido de la venta de la propiedad después de comisiones y gastos
+60,Credit Enhancement Proceeds,NUMERIC,9(10).99,LIQUIDACION,Ingresos de seguros hipotecarios y acuerdos de recourse para limitar la exposición crediticia
+61,Repurchase Make Whole Proceeds,NUMERIC,9(10).99,LIQUIDACION,Montos recibidos bajo acuerdos de representación y garantía por recompra del préstamo
+62,Other Foreclosure Proceeds,NUMERIC,9(10).99,LIQUIDACION,Montos distintos al precio de venta recibidos post-foreclosure (ej. ingresos de redención)
+63,Modification-Related Non-Interest Bearing UPB,NUMERIC,9(10).99,MODIFICACION,Porción del saldo que no acumula intereses como resultado de una modificación elegible
+64,Principal Forgiveness Amount,NUMERIC,9(10).99,LIQUIDACION,Reducción formal del saldo acordada entre prestamista y prestatario en una modificación
+65,Original List Start Date,DATE,MMYYYY,PRECIO_PROPIEDAD,Fecha acordada para iniciar el proceso de venta de la propiedad con el broker
+66,Original List Price,NUMERIC,9(10).99,PRECIO_PROPIEDAD,Precio inicial al que la propiedad fue ofertada en venta
+67,Current List Start Date,DATE,MMYYYY,PRECIO_PROPIEDAD,Fecha más reciente de inicio de listado de la propiedad para venta
+68,Current List Price,NUMERIC,9(10).99,PRECIO_PROPIEDAD,Precio actual al que la propiedad está siendo ofertada en venta
+69,Borrower Credit Score At Issuance,NUMERIC,9(3),CREDITO_DINAMICO,Puntaje FICO Score 5 del prestatario principal más reciente a la fecha de emisión del CRT
+70,Co-Borrower Credit Score At Issuance,NUMERIC,9(3),CREDITO_DINAMICO,Puntaje FICO Score 5 del co-prestatario más reciente a la fecha de emisión del CRT
+71,Borrower Credit Score Current,NUMERIC,9(3),CREDITO_DINAMICO,Puntaje FICO Score 5 del prestatario principal más reciente disponible (dinámico)
+72,Co-Borrower Credit Score Current,NUMERIC,9(3),CREDITO_DINAMICO,Puntaje FICO Score 5 del co-prestatario más reciente disponible (dinámico)
+73,Mortgage Insurance Type,ALPHA-NUMERIC,X(1),ORIGINACION,Responsable del pago del seguro hipotecario: 1=Borrower / 2=Lender / 3=Enterprise / Null=Sin MI
+74,Servicing Activity Indicator,ALPHA-NUMERIC,X(1),PERFORMANCE_MENSUAL,Indica si hubo un cambio en la actividad de servicing durante el período de reporte (Y/N)
+75,Current Period Modification Loss Amount,NUMERIC,9(10).99,MODIFICACION,Pérdida calculada para el préstamo resultante de un evento de modificación en el período actual
+76,Cumulative Modification Loss Amount,NUMERIC,9(10).99,MODIFICACION,Pérdida acumulada calculada para el préstamo resultante de uno o más eventos de modificación
+77,Current Period Credit Event Net Gain or Loss,NUMERIC,9(10).99,MODIFICACION,Ganancia o pérdida neta realizada por evento de crédito en el período actual (positivo=pérdida)
+78,Cumulative Credit Event Net Gain or Loss,NUMERIC,9(10).99,MODIFICACION,Ganancia o pérdida neta acumulada resultante de eventos de crédito del préstamo
+79,Special Eligibility Program,ALPHA-NUMERIC,X(1),ORIGINACION,Programa especial de elegibilidad: F=HFA Preferred / H=HomeReady / R=RefiNow / O=Otro
+80,Foreclosure Principal Write-off Amount,NUMERIC,9(10).99,LIQUIDACION,Montos determinados como incobrables bajo leyes estatales por prescripción del foreclosure
+81,Relocation Mortgage Indicator,ALPHA-NUMERIC,X(1),ORIGINACION,Indica si el préstamo es de reubicación (para empleados trasladados por empleadores) (Y/N)
+82,Zero Balance Code Change Date,DATE,MMYYYY,TEMPORAL,Fecha más reciente en que se identificó un cambio en el Zero Balance Code del préstamo
+83,Loan Holdback Indicator,ALPHA-NUMERIC,X(1),PERFORMANCE_MENSUAL,Indica si el préstamo está en estado de retención temporal por evaluación de Fannie Mae (Y/N/Null)
+84,Loan Holdback Effective Date,DATE,MMYYYY,TEMPORAL,Fecha del cambio más reciente en el indicador de retención del préstamo
+85,Delinquent Accrued Interest,NUMERIC,9(10).99,LIQUIDACION,Interés acumulado no cobrado calculado cuando el préstamo incurre en un evento de crédito
+86,Property Valuation Method,ALPHA-NUMERIC,X(1),COLATERAL,Método de valuación de la propiedad: A=Avalúo / W=Waiver / C=Waiver+datos condición / P=Waiver+AVM / R=GSE Refi
+87,High Balance Loan Indicator,ALPHA-NUMERIC,X(1),ORIGINACION,Indica si el saldo original supera el límite conforming general hasta el límite de área de alto costo (Y/N)
+88,ARM Initial Fixed-Rate Period <= 5 YR Indicator,ALPHA-NUMERIC,X(1),ARM,Para ARM: indica si el período inicial de tasa fija es de 5 años o menos (Y/N)
+89,ARM Product Type,ALPHA-NUMERIC,X(100),ARM,Para ARM: describe el período fijo inicial_la frecuencia de ajuste y el plazo original del préstamo
+90,Initial Fixed-Rate Period,NUMERIC,9(4),ARM,Para ARM: número de meses entre el inicio de acumulación de interés y la primera fecha de cambio de tasa
+91,Interest Rate Adjustment Frequency,NUMERIC,9(4),ARM,Para ARM: número de meses entre cambios de tasa programados tras el período inicial
+92,Next Interest Rate Adjustment Date,DATE,MMYYYY,ARM,Para ARM: próxima fecha en que la tasa de interés está sujeta a cambio
+93,Next Payment Change Date,DATE,MMYYYY,ARM,Para ARM: próxima fecha en que el monto del pago del prestatario puede cambiar
+94,Index,ALPHA-NUMERIC,X(100),ARM,Para ARM: descripción del índice sobre el que se basan los ajustes de la tasa de interés
+95,ARM Cap Structure,ALPHA-NUMERIC,X(10),ARM,Para ARM: estructura de topes de tasa en formato numérico (inicial/periódico/de por vida)
+96,Initial Interest Rate Cap Up Percent,NUMERIC,9(2).9999,ARM,Para ARM: máximo porcentaje de aumento de tasa en la primera fecha de cambio
+97,Periodic Interest Rate Cap Up Percent,NUMERIC,9(2).9999,ARM,Para ARM: máximo porcentaje de aumento de tasa en cada fecha de cambio subsecuente
+98,Lifetime Interest Rate Cap Up Percent,NUMERIC,9(2).9999,ARM,Para ARM: máximo porcentaje de aumento de tasa durante toda la vida del préstamo
+99,Mortgage Margin,NUMERIC,9(2).9999,ARM,Para ARM: margen que se suma al índice para establecer la nueva tasa en cada fecha de ajuste
+100,ARM Balloon Indicator,ALPHA-NUMERIC,X(1),ARM,Para ARM: indica si el préstamo tiene característica de pago globo al vencimiento (Y/N)
+101,ARM Plan Number,NUMERIC,9(4),ARM,Para ARM: código del plan estandarizado bajo el que el préstamo fue entregado a Fannie Mae
+102,Borrower Assistance Plan,ALPHA-NUMERIC,X(1),ASISTENCIA,Tipo de plan de asistencia activo: F=Forbearance / R=Repayment / T=Trial / O=Otro / N=Ninguno
+103,High Loan to Value (HLTV) Refinance Option Indicator,ALPHA-NUMERIC,X(1),ASISTENCIA,Indica si el préstamo original fue refinanciado bajo la opción HLTV permaneciendo en el pool (Y/N)
+104,Deal Name,ALPHA-NUMERIC,X(200),IDENTIFICACION,Título de la emisión de la serie (nombre del deal CRT/CAS/CIRT)
+105,Repurchase Make Whole Proceeds Flag,ALPHA-NUMERIC,X(1),LIQUIDACION,Indica si Fannie Mae recibió ingresos por recompra bajo acuerdos de representación y garantía (Y/N)
+106,Alternative Delinquency Resolution,ALPHA-NUMERIC,X(1),ASISTENCIA,Solución de mitigación de pérdida: P=Payment Deferral / C=COVID Deferral / D=Desastre Natural / 7=N/A
+107,Alternative Delinquency Resolution Count,NUMERIC,9(3),ASISTENCIA,Número total de resoluciones alternativas de mora reportadas por el servicer para el préstamo
+108,Total Deferral Amount,NUMERIC,9(10).99,ASISTENCIA,Monto total de capital diferido sin intereses relacionado con una o más resoluciones alternativas
+109,Payment Deferral Modification Event Indicator,ALPHA-NUMERIC,X(1),ASISTENCIA,Indica si un diferimiento de pago está contribuyendo a un evento de modificación (Y/N/7=N/A)
+110,Interest Bearing UPB,NUMERIC,9(10).99,PERFORMANCE_MENSUAL,UPB actual del préstamo excluyendo cualquier porción sin intereses resultado de modificación elegible

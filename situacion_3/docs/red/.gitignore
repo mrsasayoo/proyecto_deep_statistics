@@ -1,0 +1,17 @@
+# Ignorar todos los archivos .md
+*.md
+
+# Excepto documentacion_paralelizacion.md
+!documentacion_paralelizacion.md
+!documentacion_paralelizacion_2.md
+
+# Archivos con credenciales (SEGURIDAD)
+.config_red.sh
+ssh_rapido.sh
+copiar_servidor.sh
+descargar_servidor.sh
+*_password*
+*_credentials*
+
+# Otros archivos ignorados
+scripy.py

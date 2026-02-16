@@ -1,0 +1,59 @@
+# ============================================================================
+# .gitignore — Proyecto Deep Statistics (Raíz)
+# ============================================================================
+
+# Situación 1
+situacion_1/dataset/
+situacion_1/data_processed/
+situacion_1/outputs/
+
+# Situación 2
+situacion_2/dataset/
+situacion_2/data_processed/
+situacion_2/outputs/
+
+# Situación 3 (tiene su propio .gitignore detallado)
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Logs
+*.log
+logs/
+
+# Datos pesados
+*.parquet
+*.npy
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+*.zip
+*.gz
+*.tar
+
+# Ray
+/tmp/ray/
+ray_results/

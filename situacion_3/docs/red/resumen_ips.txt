@@ -1,0 +1,61 @@
+# RESUMEN RÁPIDO DE IPs - Para Copiar/Pegar
+
+## Dispositivo Actual (nznicolas - Laptop)
+- **Hostname:** nznicolas
+- **IP Local:** 192.168.1.17
+- **IP Tailscale:** 100.116.239.1
+- **Gateway:** 192.168.1.1
+
+## Servidor (nicolasmesa)
+- **Hostname:** nicolasmesa
+- **IP Local:** 192.168.1.15
+- **IP Tailscale:** 100.110.27.62
+- **Usuario SSH:** mrsasayo_mesa
+- **Password:** 137919
+
+## Red Pública
+- **IP Pública:** 186.27.152.241
+- **Dominio Duck DNS:** mrsasayomesa.duckdns.org
+- **ISP:** Emcali Cali
+
+## Router
+- **Modelo:** Fiberhome HG6145D2 (GPON)
+- **IP:** 192.168.1.1
+- **Usuario:** user
+- **Password:** user1234
+
+## Comandos SSH Rápidos
+```bash
+# Método 1: Via Tailscale hostname (recomendado)
+ssh mrsasayo_mesa@nicolasmesa
+
+# Método 2: Via IP Tailscale
+ssh mrsasayo_mesa@100.110.27.62
+
+# Método 3: Via LAN local (solo en casa)
+ssh mrsasayo_mesa@192.168.1.15
+
+# Método 4: Via IP pública (NO FUNCIONA - Port Forwarding bloqueado)
+ssh mrsasayo_mesa@186.27.152.241
+ssh mrsasayo_mesa@mrsasayomesa.duckdns.org
+```
+
+## Para Llamada a Emcali (Port Forwarding)
+```
+IP Pública: 186.27.152.241
+Router: Fiberhome HG6145D2
+IP Servidor: 192.168.1.15
+Puerto: 22 (SSH)
+```
+
+## Latencias Medidas
+- **LAN local:** ~1.66ms
+- **Tailscale (mismo WiFi):** ~17ms
+- **Tailscale (WAN P2P):** ~43ms
+
+## Estado Actual
+✅ Tailscale: ACTIVO (2 dispositivos)
+✅ LAN: Conectado (WiFi)
+✅ SSH: Funcionando
+✅ Duck DNS: Actualizado
+❌ Port Forwarding: NO CONFIGURADO
