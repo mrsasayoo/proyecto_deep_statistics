@@ -11,6 +11,8 @@ situacion_1/outputs/
 situacion_2/dataset/
 situacion_2/data_processed/
 situacion_2/outputs/
+situacion_2/plan_maestro.md
+situacion_2/docs/
 
 # Situación 3 (tiene su propio .gitignore detallado)
 

@@ -26,37 +26,55 @@ SRC_DIR = Path(__file__).parent / "src"
 PIPELINE_PHASES = [
     {
         "phase": 0,
-        "script": "00_test_headers.py",
-        "name": "Prueba de Lectura de Encabezados",
-        "description": "Lee encabezados de los 101 archivos y verifica consistencia",
+        "script": "000_verificar_dataset.py",
+        "name": "Verificación del Dataset",
+        "description": "Verifica estructura de los 101 archivos CSV dentro del ZIP",
     },
     {
         "phase": 1,
-        "script": "01_construccion_panel.py",
-        "name": "Construcción del Panel Analítico",
-        "description": "Integra datos longitudinales y exporta en Parquet",
+        "script": "001_csv_to_parquet_parts.py",
+        "name": "Conversión CSV → Parquet + Perfilado",
+        "description": "Convierte CSVs a Parquet (Zstd) y acumula estadísticas EDA",
     },
     {
         "phase": 2,
-        "script": "02_analisis_latente.py",
+        "script": "002_consolidar_trimestres.py",
+        "name": "Consolidación de Trimestres",
+        "description": "Renombra columnas (old→new) y fusiona _partXX en archivos únicos",
+    },
+    {
+        "phase": 3,
+        "script": "010_eda_masivo.py",
+        "name": "EDA Masivo",
+        "description": "Análisis exploratorio: 58 figuras, mapas de nulidad, correlaciones",
+    },
+    {
+        "phase": 4,
+        "script": "011_limpieza_y_transformacion.py",
+        "name": "Limpieza y Transformación",
+        "description": "Análisis de nulidad, limpieza de columnas y preparación para AFE",
+    },
+    {
+        "phase": 5,
+        "script": "020_analisis_latente.py",
         "name": "Extracción de Componentes Latentes",
         "description": "AFE/AFC y reducción dimensional",
     },
     {
-        "phase": 3,
-        "script": "03_deep_learning.py",
+        "phase": 6,
+        "script": "030_deep_learning.py",
         "name": "Deep Learning — Autoencoders (VAE)",
         "description": "Generación de embeddings de riesgo",
     },
     {
-        "phase": 4,
-        "script": "04_clustering.py",
+        "phase": 7,
+        "script": "040_clustering.py",
         "name": "Segmentación (Clustering)",
         "description": "K-Means, GMM y clustering jerárquico",
     },
     {
-        "phase": 5,
-        "script": "05_perfilado_riesgo.py",
+        "phase": 8,
+        "script": "050_perfilado_riesgo.py",
         "name": "Caracterización de Perfiles de Riesgo",
         "description": "Perfilado financiero e interpretación de clusters",
     },
@@ -110,7 +128,7 @@ def main():
     )
     parser.add_argument(
         "--phase", type=int, default=None,
-        help="Ejecutar solo una fase específica (0-5). Default: todas.",
+        help="Ejecutar solo una fase específica (0-8). Default: todas.",
     )
     parser.add_argument(
         "--distributed", action="store_true",
@@ -118,14 +136,14 @@ def main():
     )
     parser.add_argument(
         "--start-from", type=int, default=0,
-        help="Iniciar desde una fase específica (0-5). Default: 0.",
+        help="Iniciar desde una fase específica (0-8). Default: 0.",
     )
 
     args = parser.parse_args()
 
     print("=" * 70)
     print("  PIPELINE ANALÍTICO — SITUACIÓN 3")
-    print("  Dataset: Freddie Mac Loan Performance")
+    print("  Dataset: Fannie Mae CAS Loan Performance")
     print(f"  Modo: {'DISTRIBUIDO (Ray)' if args.distributed else 'LOCAL'}")
     print("=" * 70)
 
